@@ -51,6 +51,9 @@ public class UserController {
      *
      * @param username the username for the created user
      * @param password the password for the created user
+     * @param model used to pass data to the view for rendering. In this case,
+     *              the model is used to pass errors back to the sign up view
+     *              if there are errors
      * @param session HTTP session for us to store the created user
      *
      * @return redircts to the homepage view
@@ -58,7 +61,17 @@ public class UserController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signUpUser(@RequestParam("username") String username,
                              @RequestParam("password") String password,
-                               HttpSession session) {
+                             Model model,
+                             HttpSession session) {
+        // Check if the given username is not registered in database otherwise raise error
+        if (userService.getByName(username) != null) {
+            // Flash error on registration page
+            String errors = "username not available, try another";
+            model.addAttribute("errors", errors);
+
+            return "users/signup";
+        }
+
         // We'll first assign a default photo to the user
         ProfilePhoto photo = new ProfilePhoto();
         profilePhotoService.save(photo);
