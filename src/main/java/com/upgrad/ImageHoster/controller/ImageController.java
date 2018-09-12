@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.jws.WebParam;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class ImageController {
             Image newImage = new Image(title, description, uploadedImageData, currUser, imageTags);
             imageService.save(newImage);
 
-            return "redirect:/images/" + newImage.getTitle();
+            return "redirect:/images/" + newImage.getTitle() + "/" + newImage.getId();
         }
     }
 
@@ -119,6 +120,19 @@ public class ImageController {
     @RequestMapping("/images/{title}")
     public String showImage(@PathVariable String title, Model model) {
         Image image = imageService.getByTitleWithJoin(title);
+        image.setNumView(image.getNumView() + 1);
+        imageService.update(image);
+
+        model.addAttribute("user", image.getUser());
+        model.addAttribute("image", image);
+        model.addAttribute("tags", image.getTags());
+
+        return "images/image";
+    }
+
+    @RequestMapping("/images/{title}/{id}")
+    public String showImageById(@PathVariable String title, @PathVariable Integer id, Model model) {
+        Image image = imageService.getById(id);
         image.setNumView(image.getNumView() + 1);
         imageService.update(image);
 

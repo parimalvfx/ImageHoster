@@ -103,6 +103,26 @@ public class ImageManager extends SessionManager {
         return null;
     }
 
+    public Image getImageById(final Integer id) {
+        Session session = openSession();
+
+        try {
+            Image image = (Image)session.createCriteria(Image.class)
+                    .add(Restrictions.eq("id", id))
+                    .uniqueResult();
+            Hibernate.initialize(image.getTags());
+            Hibernate.initialize(image.getUser());
+            Hibernate.initialize(image.getUser().getProfilePhoto());
+            commitSession(session);
+
+            return image;
+        } catch (HibernateException e) {
+            System.out.println("unable to retrieve an image from database by its id");
+        }
+
+        return null;
+    }
+
     /**
      * This method retrieves the number of images stored in the database
      *
