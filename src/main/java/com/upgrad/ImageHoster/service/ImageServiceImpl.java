@@ -28,7 +28,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image getByTitleWithJoin(String title) { return imageManager.getImageByTitleWithJoins(title); }
 
-    // Added new implementation for getting image by id
+    // Added new implementation method for getting image by id
     @Override
     public Image getById(Integer id) { return imageManager.getImageById(id); }
 

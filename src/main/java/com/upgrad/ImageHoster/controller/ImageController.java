@@ -130,8 +130,17 @@ public class ImageController {
         return "images/image";
     }
 
+    /**
+     * This controller shows a specific image by its title and id
+     *
+     * @param title the title of the image that we want to retrieve
+     * @param id the id of the image that we want to retrieve
+     * @param model used to pass data to the view for rendering
+     *
+     * @return view for the image that was requested
+     */
     @RequestMapping("/images/{title}/{id}")
-    public String showImageById(@PathVariable String title, @PathVariable Integer id, Model model) {
+    public String showImageByTitleId(@PathVariable String title, @PathVariable Integer id, Model model) {
         Image image = imageService.getById(id);
         image.setNumView(image.getNumView() + 1);
         imageService.update(image);

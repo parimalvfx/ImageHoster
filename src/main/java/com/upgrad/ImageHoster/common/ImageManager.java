@@ -103,6 +103,14 @@ public class ImageManager extends SessionManager {
         return null;
     }
 
+    /**
+     * This method retrieves an image by its id, as well as the data
+     * related to its tags, user, and user's profile photo
+     *
+     * @param id the id of the image that we are looking for
+     *
+     * @return an Image object that we retrieved by its id
+     */
     public Image getImageById(final Integer id) {
         Session session = openSession();
 
@@ -110,9 +118,9 @@ public class ImageManager extends SessionManager {
             Image image = (Image)session.createCriteria(Image.class)
                     .add(Restrictions.eq("id", id))
                     .uniqueResult();
-            Hibernate.initialize(image.getTags());
-            Hibernate.initialize(image.getUser());
-            Hibernate.initialize(image.getUser().getProfilePhoto());
+            Hibernate.initialize(image.getTags()); // doing a join on tags table
+            Hibernate.initialize(image.getUser()); // doing a join on user table
+            Hibernate.initialize(image.getUser().getProfilePhoto()); // doing a join on profile photo table
             commitSession(session);
 
             return image;
