@@ -141,7 +141,8 @@ public class ImageControllerTest {
                 .param("description", "description")
                 .param("tags", tags))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/images/someImageTitle"));
+                // Update URL with title + id
+                .andExpect(redirectedUrl("/images/someImageTitle/0"));
     }
 
     @Test
@@ -219,6 +220,7 @@ public class ImageControllerTest {
                 .param("description", "description")
                 .param("tags", tags))
                 .andExpect(status().is(302))
-                .andExpect(redirectedUrl("/images/someImageTitle"));
+                // Update URL with title + id
+                .andExpect(redirectedUrl("/images/someImageTitle/0"));
     }
 }

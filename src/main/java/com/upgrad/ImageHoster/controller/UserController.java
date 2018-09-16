@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
@@ -51,6 +53,9 @@ public class UserController {
      *
      * @param username the username for the created user
      * @param password the password for the created user
+     * @param model used to pass data to the view for rendering. In this case,
+     *              the model is used to pass errors back to the sign up view
+     *              if there are errors
      * @param session HTTP session for us to store the created user
      *
      * @return redircts to the homepage view
@@ -58,7 +63,41 @@ public class UserController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signUpUser(@RequestParam("username") String username,
                              @RequestParam("password") String password,
-                               HttpSession session) {
+                             Model model,
+                             HttpSession session) {
+        final int MINIMUM_CHAR = 6;
+        String error_url_value = "users/signup";
+
+        // Check if the given username is not registered in database otherwise raise error
+        if (userService.getByName(username) != null) {
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("username", "username has been registered");
+            model.addAttribute("errors", error_map);
+
+            // Return to signup page
+            return error_url_value;
+        }
+
+        // Check if the length of given username is greater than 6 otherwise raise error
+        if (username.length() < MINIMUM_CHAR) {
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("username", "needs to be 6 characters or longer");
+            model.addAttribute("errors", error_map);
+
+            // Return to signup page
+            return error_url_value;
+        }
+
+        // Check if the length of given password is greater than 6 otherwise raise error
+        if (password.length() < MINIMUM_CHAR) {
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("password", "needs to be 6 characters or longer");
+            model.addAttribute("errors", error_map);
+
+            // Return to signup page
+            return error_url_value;
+        }
+
         // We'll first assign a default photo to the user
         ProfilePhoto photo = new ProfilePhoto();
         profilePhotoService.save(photo);
