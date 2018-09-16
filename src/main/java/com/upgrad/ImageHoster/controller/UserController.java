@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
@@ -63,13 +65,37 @@ public class UserController {
                              @RequestParam("password") String password,
                              Model model,
                              HttpSession session) {
+        final int MINIMUM_CHAR = 6;
+        String error_url_value = "users/signup";
+
         // Check if the given username is not registered in database otherwise raise error
         if (userService.getByName(username) != null) {
-            // Flash error on registration page
-            String errors = "username not available, try another";
-            model.addAttribute("errors", errors);
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("username", "username has been registered");
+            model.addAttribute("errors", error_map);
 
-            return "users/signup";
+            // Return to signup page
+            return error_url_value;
+        }
+
+        // Check if the length of given username is greater than 6 otherwise raise error
+        if (username.length() < MINIMUM_CHAR) {
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("username", "needs to be 6 characters or longer");
+            model.addAttribute("errors", error_map);
+
+            // Return to signup page
+            return error_url_value;
+        }
+
+        // Check if the length of given password is greater than 6 otherwise raise error
+        if (password.length() < MINIMUM_CHAR) {
+            Map<String, String> error_map = new HashMap<>();
+            error_map.put("password", "needs to be 6 characters or longer");
+            model.addAttribute("errors", error_map);
+
+            // Return to signup page
+            return error_url_value;
         }
 
         // We'll first assign a default photo to the user
